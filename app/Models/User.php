@@ -45,4 +45,19 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function appointments()
+{
+    return $this->hasMany(Appointment::class);
+}
+// علاقة واحد لواحد: المستخدم ممكن يكون طبيب
+public function doctor()
+{
+    return $this->hasOne(Doctor::class);
+}
+
+public function testimonials()
+{
+    return $this->hasMany(Testimonial::class);
+}
 }

@@ -11,4 +11,8 @@ class Service extends Model
         'description', 
     ];
 
+    public function doctors()
+{
+    return $this->belongsToMany(Doctor::class);
+}
 }

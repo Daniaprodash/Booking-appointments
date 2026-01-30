@@ -1,0 +1,655 @@
+:root {
+    --dark: #01052d;
+    --mint: #16e1c7;
+    --muted: #8a93ad;
+    --bg: #f4f7fb;
+    --pink: #ff4f70;
+}
+
+.dashboard-container {
+    min-height: calc(100vh - 120px);
+    background: var(--bg);
+    padding: 2rem 1.5rem;
+    direction: rtl;
+}
+
+.dashboard-header {
+    background: linear-gradient(135deg, var(--dark) 0%, #0a0f3d 50%, #1a1f4d 100%);
+    color: #fff;
+    padding: 2.5rem;
+    border-radius: 24px;
+    margin-bottom: 2rem;
+    box-shadow: 0 15px 40px rgba(1,5,45,.25);
+    position: relative;
+    overflow: hidden;
+}
+
+.dashboard-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(22,225,199,0.1) 0%, transparent 70%);
+    animation: pulse 8s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+.header-content {
+    position: relative;
+    z-index: 1;
+}
+
+.welcome-section {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.welcome-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--mint), #0fb3a1);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(22,225,199,.3);
+    flex-shrink: 0;
+}
+
+.welcome-text {
+    flex: 1;
+    min-width: 200px;
+}
+
+.dashboard-header h1 {
+    font-size: 2.2rem;
+    margin-bottom: 0.5rem;
+    color: #fff;
+    font-weight: 700;
+}
+
+.dashboard-header .user-name {
+    color: var(--mint);
+    display: inline-block;
+    position: relative;
+}
+
+.dashboard-header .user-name::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--mint);
+    border-radius: 2px;
+}
+
+.welcome-subtitle {
+    color: rgba(255,255,255,.85);
+    font-size: 1.05rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.welcome-subtitle i {
+    color: var(--mint);
+    font-size: 1.1rem;
+}
+
+.stats-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.5rem;
+}
+
+.stat-card {
+    background: rgba(255,255,255,.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.stat-card:hover {
+    background: rgba(255,255,255,.15);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,.2);
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.stat-appointments .stat-icon {
+    background: linear-gradient(135deg, #d4edda, #c3e6cb);
+    color: #155724;
+}
+
+.stat-pending .stat-icon {
+    background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+    color: #856404;
+}
+
+.stat-total .stat-icon {
+    background: linear-gradient(135deg, rgba(22,225,199,.2), rgba(22,225,199,.3));
+    color: var(--mint);
+}
+
+.stat-info {
+    flex: 1;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1;
+    margin-bottom: 0.3rem;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: rgba(255,255,255,.75);
+    font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .dashboard-header {
+        padding: 1.5rem;
+    }
+
+    .welcome-section {
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+    }
+
+    .welcome-icon {
+        width: 70px;
+        height: 70px;
+        font-size: 2rem;
+    }
+
+    .dashboard-header h1 {
+        font-size: 1.8rem;
+    }
+
+    .stats-cards {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .stat-card {
+        padding: 1.25rem;
+    }
+
+    .stat-number {
+        font-size: 1.75rem;
+    }
+}
+
+.dashboard-tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.tab-btn {
+    padding: 0.75rem 1.5rem;
+    background: #fff;
+    border: 2px solid #e0e6f0;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--muted);
+    transition: all 0.3s;
+    font-size: 0.95rem;
+}
+
+.tab-btn:hover {
+    border-color: var(--mint);
+    color: var(--mint);
+}
+
+.tab-btn.active {
+    background: var(--mint);
+    color: #fff;
+    border-color: var(--mint);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+    animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* قسم الأطباء */
+.doctors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.doctor-card-dash {
+    background: #fff;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,.08);
+    transition: transform 0.3s, box-shadow 0.3s;
+    text-align: center;
+}
+
+.doctor-card-dash:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,.12);
+}
+
+.doctor-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--mint);
+    margin: 0 auto 1rem;
+    display: block;
+}
+
+.doctor-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: 0.5rem;
+}
+
+.doctor-specialty {
+    color: var(--mint);
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+}
+
+.doctor-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+    color: var(--muted);
+}
+
+.btn-book-appointment {
+    width: 100%;
+    padding: 0.75rem;
+    background: linear-gradient(120deg, var(--mint), #0fb3a1);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-top: 1rem;
+}
+
+.btn-book-appointment:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(22,225,199,.3);
+}
+
+/* قسم المواعيد */
+.appointments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.appointment-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    transition: transform 0.2s;
+}
+
+.appointment-card:hover {
+    transform: translateX(-5px);
+}
+
+.appointment-info {
+    flex: 1;
+    min-width: 250px;
+}
+
+.appointment-doctor {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: 0.5rem;
+}
+
+.appointment-service {
+    color: var(--mint);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.appointment-datetime {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--muted);
+}
+
+.appointment-status {
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.status-pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-confirmed {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-cancelled {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.status-rejected {
+    background: #f7d8b0;
+    color: #fe9101;
+}
+
+.appointment-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-action {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+}
+
+.btn-cancel {
+    background: var(--pink);
+    color: #fff;
+}
+
+.btn-cancel:hover {
+    background: #e63950;
+    transform: scale(1.05);
+}
+
+.btn-edit {
+    background: var(--mint);
+    color: #fff;
+}
+
+.btn-edit:hover {
+    background: #0fb3a1;
+    transform: scale(1.05);
+}
+
+/* نموذج الحجز */
+.booking-form-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,.1);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form-title {
+    font-size: 1.5rem;
+    color: var(--dark);
+    margin-bottom: 1.5rem;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.form-title i {
+    color: var(--mint);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--dark);
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.form-group select,
+.form-group input {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border: 2px solid #e0e6f0;
+    border-radius: 12px;
+    background: var(--bg);
+    color: var(--dark);
+    font-size: 0.95rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group select:focus,
+.form-group input:focus {
+    outline: none;
+    border-color: var(--mint);
+    box-shadow: 0 0 0 3px rgba(22,225,199,.15);
+}
+
+.form-group textarea {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border: 2px solid #e0e6f0;
+    border-radius: 12px;
+    background: var(--bg);
+    color: var(--dark);
+    font-size: 0.95rem;
+    min-height: 100px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--mint);
+    box-shadow: 0 0 0 3px rgba(22,225,199,.15);
+}
+
+.btn-submit {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(120deg, var(--mint), #0fb3a1);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(22,225,199,.3);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--muted);
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: var(--mint);
+    opacity: 0.5;
+}
+
+.empty-state p {
+    font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+    .dashboard-container {
+        padding: 1rem;
+    }
+
+    .appointment-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .appointment-actions {
+        width: 100%;
+    }
+
+    .btn-action {
+        flex: 1;
+    }
+}
+
+/* mail section */
+#mail {
+    padding: 30px;
+    background: var(--bg);
+}
+
+.mail-title {
+    color: var(--dark);
+    margin-bottom: 20px;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.messages-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* بطاقة الرسالة */
+.message-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border: 1px solid #e6e9ef;
+    transition: 0.25s ease;
+}
+
+.message-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(1, 5, 45, 0.08);
+    border-color: var(--mint);
+}
+
+/* أيقونة الرسالة */
+.msg-icon {
+    background: var(--mint);
+    color: #fff;
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+}
+
+/* المحتوى */
+.msg-content {
+    flex: 1;
+}
+
+.msg-title {
+    margin: 0;
+    color: var(--dark);
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.msg-text {
+    margin: 6px 0;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.msg-doctor {
+    color: var(--mint);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* التاريخ */
+.msg-date span {
+    color: var(--pink);
+    font-weight: 600;
+    font-size: 14px;
+}
