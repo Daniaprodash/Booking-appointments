@@ -2,7 +2,7 @@
 @section('title', 'لوحة التحكم')
 
 @section('content')
-<div class="dashboard-container">
+ <div class="dashboard-container">
     <div class="dashboard-header">
         <div class="header-content">
             <div class="welcome-section">
@@ -84,8 +84,9 @@
         <div class="doctors-grid">
             @forelse($doctors ?? [] as $doctor)
                 <div class="doctor-card-dash">
+                    
                     <img 
-                        src="{{ $doctor->image ?? asset('assets/images/default-doctor.jpg') }}" 
+                        src="{{ $doctor->user->image ?? asset('assets/images/default-doctor.jpg') }}" 
                         alt="{{ $doctor->user->name }}"
                         class="doctor-avatar"
                         onerror="this.src='{{ asset('assets/images/default-doctor.jpg') }}'">
@@ -267,7 +268,7 @@
     </div>
 
     <!-- قسم البريد -->
-<div id="mail">
+  <div id="mail" class="tab-content">
     <h1 class="mail-title">البريد الوارد</h1>
 
     <div class="messages-container">
@@ -288,8 +289,8 @@
             </div>
         </div>
     </div>
-</div>
-</div>
+  </div>
+ </div>
 
 <script>
     function switchTab(tabName) {
@@ -319,7 +320,7 @@
         
         // تمرير الحدث للزر
         const event = new Event('click');
-        document.querySelector('.tab-btn:last-child').dispatchEvent(event);
+        document.querySelector('.tab-btn:last-child(2)').dispatchEvent(event);
     }
 
    

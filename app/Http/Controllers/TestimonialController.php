@@ -39,5 +39,14 @@ class TestimonialController extends Controller
     }
 
     // delete comment
-    
+    public function delete($id){
+        $testimonial = Testimonial::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        $testimonial->delete();
+
+        return redirect()->route('index')
+            ->with('success', 'تم حذف التعليق بنجاح.');
+    }
 }

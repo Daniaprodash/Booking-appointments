@@ -16,47 +16,50 @@ class AuthController extends Controller
   }
 
 //login processing
-   public function loginProcessing(Request $request){
-    $validator= Validator::make($request->all() , [
-         'email' => 'required|email',
-         'password' => 'required|min:6',
-    ] , [
-            'email.required' => 'البريد الإلكتروني مطلوب',
-            'email.email' => 'البريد الإلكتروني غير صحيح',
-            'password.required' => 'كلمة المرور مطلوبة',
-            'password.min' => 'كلمة المرور يجب أن تكون 6 أحرف على الأقل',
-    ]);
-      if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput($request->except('password'));
-        }
-        
+ public function loginProcessing(Request $request){
+  $validator= Validator::make($request->all() , [
+       'email' => 'required|email',
+       'password' => 'required|min:6',
+  ] , [
+          'email.required' => 'البريد الإلكتروني مطلوب',
+          'email.email' => 'البريد الإلكتروني غير صحيح',
+          'password.required' => 'كلمة المرور مطلوبة',
+          'password.min' => 'كلمة المرور يجب أن تكون 6 أحرف على الأقل',
+  ]);
 
-        $credentials = $request->only('email', 'password');
+  if ($validator->fails()) {
+      return redirect()->back()
+          ->withErrors($validator)
+          ->withInput($request->except('password'));
+  }
 
-        if (Auth::attempt($credentials, $request->filled('remember'))) {
-            $request->session()->regenerate();
-           // التحقق من الدور (role)
-        $user = Auth::user();
-        if ($user->role === 'doctor') {
-            return redirect()->intended(route('doctorDashboard'));
-        } elseif ($user->role === 'user') {
-            return redirect()->intended(route('dashboard'));
-        } else {
-            // في حال كان الدور غير معروف
-            Auth::logout();
-            return redirect()->back()->withErrors([
-                'role' => 'لا يوجد صلاحية مناسبة لهذا الحساب',
-            ]);
-        }
+  $credentials = $request->only('email', 'password');
 
-        }
+  if (Auth::attempt($credentials, $request->filled('remember'))) {
+      $request->session()->regenerate();
 
-        return back()->withErrors([
-            'email' => 'البريد الإلكتروني أو كلمة المرور غير صحيحة',
-        ])->withInput($request->except('password'));
-   }  
+      // تحديث آخر تسجيل دخول
+      $user = Auth::user();
+      $user->last_login_at = now();
+      $user->save();
+
+      // التحقق من الدور (role)
+      if ($user->role === 'doctor') {
+          return redirect()->intended(route('doctorDashboard'));
+      } elseif ($user->role === 'user') {
+          return redirect()->intended(route('dashboard'));
+      } else {
+          Auth::logout();
+          return redirect()->back()->withErrors([
+              'role' => 'لا يوجد صلاحية مناسبة لهذا الحساب',
+          ]);
+      }
+  }
+
+  return back()->withErrors([
+      'email' => 'البريد الإلكتروني أو كلمة المرور غير صحيحة',
+  ])->withInput($request->except('password'));
+ }
 //end login processing
 
 // show register

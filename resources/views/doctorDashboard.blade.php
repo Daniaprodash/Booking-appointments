@@ -1,10 +1,17 @@
 @extends('layouts.app')
 @section('title','لوحة الطبيب')
 @section('content')
-    <div class="doctor-dashboard-container" role="main">
+<!-- doctor dashboard container -->
+    <div class="doctor-dashboard-container" role="main" id="doctorDashboardContainer">
+
+        <!-- طبقة تخفيف خلف السايدبار على الجوال -->
+        <div class="doctor-dashboard-sidebar-overlay" id="doctorSidebarOverlay" aria-hidden="true"></div>
 
         <!-- Sidebar -->
-        <aside class="doctor-dashboard-sidebar" aria-label="تنقل الطبيب">
+        <aside class="doctor-dashboard-sidebar" id="doctorDashboardSidebar" aria-label="تنقل الطبيب">
+            <button type="button" class="doctor-dashboard-sidebar-close" id="doctorSidebarClose" aria-label="إغلاق القائمة">
+                <i class="fas fa-times"></i>
+            </button>
             <div class="doctor-dashboard-brand">
                 <div class="doctor-dashboard-logo"><i class="fas fa-tooth"></i></div>
                 <div>
@@ -14,7 +21,7 @@
             </div>
 
             <div class="doctor-dashboard-profile">
-                <img src="{{ auth()->user()->avatar ?? asset('assets/images/default-doctor.jpg') }}" alt="صورة" class="doctor-dashboard-avatar">
+                <img src="{{ auth()->user()->image ?? asset('assets/images/default-doctor.jpg') }}" alt="صورة" class="doctor-dashboard-avatar">
                 <div class="doctor-dashboard-profile-info">
                     <h4>{{ auth()->user()->name ?? 'د. اسم الطبيب' }}</h4>
                     <p>{{ $doctor->specialty }}</p>
@@ -23,11 +30,12 @@
 
             <nav class="doctor-dashboard-nav-list" aria-label="قائمة التنقل">
                 <a class="doctor-dashboard-nav-item active" href="#"><i class="fas fa-tachometer-alt"></i> لوحة المعلومات</a>
-                <a class="doctor-dashboard-nav-item" href="#"><i class="fas fa-file-medical"></i> السجلات الطبية</a>
-                <a class="doctor-dashboard-nav-item" href="#"><i class="fas fa-wallet"></i> الفواتير والمدفوعات</a>
-                <a class="doctor-dashboard-nav-item" href="#"><i class="fas fa-cog"></i> الإعدادات</a>
-                <a class="doctor-dashboard-nav-item" href="#"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a>
+                <a class="doctor-dashboard-nav-item" href="{{ route('showMedicalRecords') }}"><i class="fas fa-file-medical"></i> السجلات الطبية</a>
+                <a class="doctor-dashboard-nav-item" href="{{ route('payment') }}"><i class="fas fa-wallet"></i> الفواتير والمدفوعات</a>
+                <a class="doctor-dashboard-nav-item" href="{{ route('settings') }}"><i class="fas fa-cog"></i> الإعدادات</a>
+                <a class="doctor-dashboard-nav-item" href="{{ route('auth.logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a>
             </nav>
+            <form id="logout-form" action="{{ route('auth.logout') }}" method="POST" class="d-none">@csrf</form>
 
             <div class="doctor-dashboard-sidebar-footer">
                 آخر تسجيل دخول: <br><strong style="color:var(--primary-2)">{{ auth()->user()->last_login_at ?? 'لم يتم تسجيل دخول بعد' }}</strong>
@@ -37,9 +45,14 @@
         <!-- Main -->
         <main class="doctor-dashboard-main">
             <div class="doctor-dashboard-topbar">
+                <div class="doctor-dashboard-topbar-start">
+                <button type="button" class="doctor-dashboard-sidebar-toggle" id="doctorSidebarToggle" aria-label="فتح القائمة">
+                    <i class="fas fa-bars"></i>
+                </button>
                 <div class="doctor-dashboard-searchbox">
                     <i class="fas fa-search" style="color:var(--muted)"></i>
                     <input placeholder="ابحث عن مريض، موعد أو ملاحظة">
+                </div>
                 </div>
 
                 <div class="doctor-dashboard-actions">
@@ -92,18 +105,18 @@
                         <i class="fas fa-check-circle"></i>
                     </div>
                     <div class="doctor-dashboard-stat-content">
-                        <h3>{{ $percentage }}</h3>
+                        <h3>{{ $percentage }}%</h3>
                         <p>نسبة الحضور</p>
                     </div>
                 </div>
 
                 <div class="doctor-dashboard-stat-card">
                     <div class="doctor-dashboard-stat-icon" style="background:#ff6b95">
-                        <i class="fas fa-wallet"></i>
+                        <i class="fas fa-star"></i>
                     </div>
                     <div class="doctor-dashboard-stat-content">
-                        <h3>$1,240</h3>
-                        <p>إجمالي اليوم</p>
+                        <h3>50.00</h3>
+                        <p>معدل التقييم</p>
                     </div>
                 </div>
             </section>
@@ -116,7 +129,7 @@
                         <div class="doctor-dashboard-appointment">
                             <div class="meta">
                                 <div class="doctor-dashboard-patient">
-                                    <img src="{{ asset('assets/images/patient.webp') }}" alt="مريض">
+                                    <img src="{{ $appointment->user->image ?? asset('assets/images/patient.webp') }}" alt="مريض">
                                     <div>
                                         <div style="font-weight:700">{{ $appointment->user->name }}</div>
                                         <div style="font-size:0.9rem;color:var(--muted)">{{ $appointment->service->title }} - {{ $appointment->appointment_date }}</div>
@@ -218,18 +231,24 @@
                 <aside>
                     <div class="doctor-dashboard-card" style="margin-bottom:16px">
                         <h4>التقويم</h4>
-                        <div class="doctor-dashboard-calendar">تقويم تفاعلي (مكان مخصص لدمج مكتبة التقويم لاحقاً)</div>
+                        <div id="doctorCalendar" class="doctor-dashboard-calendar-inner"></div>
+                        <div class="doctor-dashboard-calendar-legend" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;font-size:0.75rem;color:var(--muted)">
+                            <span style="display:flex;align-items:center;gap:4px"><i style="color:#ffb86b">●</i> قيد الانتظار</span>
+                            <span style="display:flex;align-items:center;gap:4px"><i style="color:#0fb3a1">●</i> مؤكد</span>
+                            <span style="display:flex;align-items:center;gap:4px"><i style="color:#ee5a52">●</i> مرفوض</span>
+                            <span style="display:flex;align-items:center;gap:4px"><i style="color:#8a93ad">●</i> ملغي</span>
+                        </div>
                     </div>
 
                     <div class="doctor-dashboard-card">
                          <h4>الملف الشخصي</h4>
                         <div style="display:flex;gap:12px;align-items:center">
-                            <img src="{{ auth()->user()->avatar ?? asset('assets/images/default-doctor.jpg') }}" width="64" height="64" class="doctor-dashboard-avatar" style="object-fit:cover">
+                            <img src="{{ auth()->user()->image ?? asset('assets/images/default-doctor.jpg') }}" width="64" height="64" class="doctor-dashboard-avatar" style="object-fit:cover">
                             <div>
                                 <div style="font-weight:700">{{ auth()->user()->name ?? 'د. اسم الطبيب' }}</div>
                                 <div style="color:var(--muted)">{{ auth()->user()->email ?? 'email@domain.com' }}</div>
                                 <div style="margin-top:8px">
-                                    <a class="doctor-dashboard-nav-item" style="padding:8px 10px;border-radius:8px;background:linear-gradient(90deg,var(--primary-1),var(--primary-2));color:#fff;font-size:0.9rem">
+                                    <a href="{{ route('doctor.profile.edit') }}" class="doctor-dashboard-nav-item" style="display:inline-block;padding:8px 10px;border-radius:8px;background:linear-gradient(90deg,var(--primary-1),var(--primary-2));color:#fff;font-size:0.9rem;text-decoration:none">
                                         تحرير الملف
                                     </a>
                                 </div>
@@ -240,9 +259,10 @@
             </div>
 
         </main>
+        
     </div>
 
-    <!-- Email Modal -->
+<!-- Email Modal for sending email to patient -->
     <div id="emailModal" class="email-modal" style="display:none">
         <div class="email-modal-content">
             <div class="email-modal-header">
@@ -278,7 +298,7 @@
         </div>
     </div>
 
-    <!-- send email to patient -->
+<!-- send email to patient -->
     <script>
         function openEmailModal(button) {
             const appointmentId = button.getAttribute('data-appointment-id');
@@ -317,6 +337,64 @@
                     }
                 }
             });
+        });
+
+        // فتح/إغلاق السايدبار على الشاشات الصغيرة
+        (function() {
+            var container = document.getElementById('doctorDashboardContainer');
+            var sidebar = document.getElementById('doctorDashboardSidebar');
+            var overlay = document.getElementById('doctorSidebarOverlay');
+            var toggleBtn = document.getElementById('doctorSidebarToggle');
+            var closeBtn = document.getElementById('doctorSidebarClose');
+
+            function openSidebar() {
+                if (container) container.classList.add('sidebar-open');
+                if (overlay) { overlay.classList.add('active'); overlay.setAttribute('aria-hidden', 'false'); }
+                document.body.style.overflow = 'hidden';
+            }
+            function closeSidebar() {
+                if (container) container.classList.remove('sidebar-open');
+                if (overlay) { overlay.classList.remove('active'); overlay.setAttribute('aria-hidden', 'true'); }
+                document.body.style.overflow = '';
+            }
+
+            if (toggleBtn) toggleBtn.addEventListener('click', openSidebar);
+            if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
+            if (overlay) overlay.addEventListener('click', closeSidebar);
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && container && container.classList.contains('sidebar-open')) closeSidebar();
+            });
+        })();
+    </script>
+
+<!-- FullCalendar -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+
+<!-- FullCalendar Configuration-->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('doctorCalendar');
+            if (!calendarEl) return;
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'ar',
+                direction: 'rtl',
+                headerToolbar: {
+                    start: 'title',
+                    center: '',
+                    end: 'prev,next today'
+                },
+                buttonText: {
+                    today: 'اليوم',
+                    month: 'شهر',
+                },
+                firstDay: 6,
+                events: @json($calendarEvents ?? []),
+                height: 'auto',
+                contentHeight: 280,
+            });
+            calendar.render();
         });
     </script>
 @endsection

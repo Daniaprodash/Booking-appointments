@@ -37,7 +37,7 @@
                 <li class="nav-item">
                     <a href="#comments" class="nav-link">
                         <i class="fas fa-comment-dots"></i>
-                        <span>التعليقات</span>
+                        <span>الآراء</span>
                     </a>
                 </li>
                 @auth

@@ -89,7 +89,7 @@
                         <p class="service-desc">{{ $service->description }}</p>
                         <div class="service-footer">
                             <div class="service-price">
-                                <span class="price-currency">$</span>
+                                <span class="price-currency">تبدأ من $</span>
                                 <span class="price-amount">{{ $service->price }}</span>
                             </div>
                             <a href="{{ Auth::check() ? (auth()->user()->role === 'doctor' ? route('doctorDashboard') : route('dashboard')) : route('auth.login') }}" class="service-btn">
@@ -135,7 +135,7 @@
                     <div class="avatar-wrap">
                         <div class="avatar-border"></div>
                         <img
-                            src="{{ $doctor->image ?? $doctor->photo_url ?? asset('assets/images/default-doctor.jpg') }}"
+                            src="{{ ($img = $doctor->user?->image ?? $doctor->image) && trim($img) ? asset($img) : asset('assets/images/default-doctor.jpg') }}"
                             alt="صورة {{ $doctor->name }}"
                             class="avatar"
                             onerror="this.src='{{ asset('assets/images/default-doctor.jpg') }}'">
@@ -154,7 +154,7 @@
                         <p class="doctor-desc">
                             {{ \Illuminate\Support\Str::limit($doctor->bio ?? 'طبيب مختص في طب الأسنان يقدم رعاية وقائية وعلاجية مع الاهتمام براحة المريض.', 120) }}
                         </p>
-
+                       
                         <div class="doctor-contact" aria-label="معلومات التواصل">
                             <div class="contact-item">
                                 <div class="contact-icon">
@@ -169,6 +169,7 @@
                                 </div>
                                 <a href="mailto:{{ $doctor->user->email }}">{{ $doctor->user->email ?? 'غير متوفر' }}</a>
                             </div>
+
                         </div>
 
                         <a href="{{ Auth::check() ? (auth()->user()->role === 'doctor' ? route('doctorDashboard') : route('dashboard')) : route('auth.login') }}" class="btn-book-doctor">
@@ -238,7 +239,7 @@
 <!-- end steps section -->
 
 <!-- testimonials section -->
-<section class="testimonials-section" id="comments">
+ <section class="testimonials-section" id="comments">
     <div class="testimonials-container">
         <div class="testimonials-header">
             <div class="section-badge">
@@ -253,9 +254,15 @@
             @forelse($testimonials ?? [] as $testimonial)
             <div class="testimonial-card">
             @if (auth()->id() === $testimonial->user_id)
-             <button class="testimonial-delete-btn" type="button" title="حذف التعليق">
-             <i class="fas fa-trash"></i>
-             </button>
+             <form action="{{ route('testimonials.delete', $testimonial->id) }}"
+              method="POST" 
+              onsubmit="return confirm('هل أنت متأكد من حذف هذا التعليق؟')">
+                @csrf
+                @method('DELETE')
+                <button class="testimonial-delete-btn" type="submit" title="حذف التعليق">
+                    <i class="fas fa-trash"></i>
+                </button>
+             </form>
             @endif
                 <div class="testimonial-header">
                     <div class="testimonial-avatar">
@@ -332,7 +339,7 @@
                     <div class="form-group">
                         <label for="rating" class="form-label">التقييم</label>
                         <div class="rating-input">
-                            <input type="radio" name="rating" id="rating5" value="5" required>
+                            <input type="radio" name="rating" id="rating5" value="5" >
                             <label for="rating5" class="rating-star"><i class="fas fa-star"></i></label>
                             <input type="radio" name="rating" id="rating4" value="4">
                             <label for="rating4" class="rating-star"><i class="fas fa-star"></i></label>
@@ -353,7 +360,6 @@
                             class="form-textarea" 
                             rows="5" 
                             placeholder="اكتب تعليقك هنا..." 
-                            required
                             maxlength="500"
                         >{{ old('comment') }}</textarea>
                         <div class="char-count">
@@ -380,11 +386,14 @@
         </div>
         @endif
     </div>
-</section>
+ </section>
 <!-- end testimonials section -->
 
+
+
+
 <script>
-    // Character counter
+    // Character counter---عداد الحروف المكتوبة
     document.addEventListener('DOMContentLoaded', function() {
         const textarea = document.getElementById('comment');
         const charCount = document.getElementById('charCount');
@@ -400,7 +409,7 @@
             });
         }
 
-        // Rating stars interaction
+        // Rating stars interaction---تقييم الطبيب
         const ratingInputs = document.querySelectorAll('.rating-input input[type="radio"]');
         const ratingLabels = document.querySelectorAll('.rating-input .rating-star');
         
@@ -408,7 +417,7 @@
             input.addEventListener('change', function() {
                 const value = parseInt(this.value);
                 ratingLabels.forEach((label, labelIndex) => {
-                    // Since we're using row-reverse, index 0 is rating 5, index 4 is rating 1
+                    // Since we're using row-reverse, index 0 is rating 5, index 4 is rating 1---من 5 الى 1
                     const labelRating = 5 - labelIndex;
                     if (labelRating <= value) {
                         label.classList.add('selected');
@@ -419,7 +428,7 @@
             });
         });
 
-        // Initialize selected stars based on old input
+        // Initialize selected stars based on old input --ابدأ بالتقييم المحدد
         const selectedRating = document.querySelector('input[name="rating"]:checked');
         if (selectedRating) {
             const value = parseInt(selectedRating.value);
@@ -431,7 +440,7 @@
             });
         }
 
-        // Initialize character count if there's old input
+        // Initialize character count if there's old input--ابدأ بعدد الحروف المكتوبة
         if (textarea && textarea.value.length > 0) {
             charCount.textContent = textarea.value.length;
             if (textarea.value.length > 450) {

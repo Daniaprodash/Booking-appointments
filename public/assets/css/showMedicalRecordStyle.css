@@ -1,0 +1,120 @@
+.medical-records-alert {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+}
+.medical-records-alert-success {
+    background: linear-gradient(90deg, var(--primary-1), var(--primary-2));
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(15,179,161,0.2);
+}
+.medical-records-alert-error {
+    background: linear-gradient(90deg, #ff6b6b, #ee5a52);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(238,90,82,0.2);
+}
+.medical-records-empty {
+    text-align: center;
+    padding: 48px 24px;
+}
+.medical-records-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+.medical-records-card {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.medical-records-card-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.medical-records-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 3px solid rgba(22,225,199,0.2);
+    flex-shrink: 0;
+}
+.medical-records-card-info {
+    flex: 1;
+    min-width: 0;
+}
+.medical-records-name {
+    margin: 0 0 4px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--accent-contrast);
+}
+.medical-records-email {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--muted);
+    word-break: break-all;
+}
+.medical-records-card-footer {
+    padding-top: 8px;
+    border-top: 1px solid rgba(138,147,173,0.15);
+}
+.medical-records-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    background: linear-gradient(90deg, var(--primary-1), var(--primary-2));
+    color: #fff;
+    border: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+    text-decoration: none;
+}
+.medical-records-btn:hover {
+    opacity: 0.95;
+    transform: translateY(-1px);
+}
+.medical-records-btn:active {
+    transform: translateY(0);
+}
+@media (max-width: 768px) {
+    .doctor-dashboard-container {
+        flex-direction: column;
+        padding: 16px;
+    }
+    .medical-records-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.medical-records-card-footer {
+    position: relative; /* مهم جداً */
+}
+
+.download-medical-record-btn {
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    background: linear-gradient(90deg, var(--primary-1), var(--primary-2));
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 15px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+   
+}
