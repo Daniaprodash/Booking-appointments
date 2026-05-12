@@ -62,4 +62,9 @@ public function testimonials()
 {
     return $this->hasMany(Testimonial::class);
 }
+
+public function activities()
+{
+    return $this->hasMany(Activity::class);
+}
 }

@@ -25,6 +25,7 @@ Route::middleware('auth')->group(function() {
     Route::get('/doctor/profile/edit', [DoctorController::class, 'editProfile'])->name('doctor.profile.edit');
     Route::put('/doctor/profile', [DoctorController::class, 'updateProfile'])->name('doctor.profile.update');
     Route::post('/appointments', [App\Http\Controllers\AppointmentController::class, 'store'])->name('appointments.store');
+    Route::put('/appointments/{id}', [App\Http\Controllers\AppointmentController::class, 'update'])->name('appointments.update');
     Route::delete('/appointments/{id}', [App\Http\Controllers\AppointmentController::class, 'cancel'])->name('appointments.cancel');
     Route::patch('/appointments/{id}/confirm', [App\Http\Controllers\AppointmentController::class, 'confirm'])->name('appointments.confirm');
     Route::patch('/appointments/{id}/reject', [App\Http\Controllers\AppointmentController::class, 'reject'])->name('appointments.reject');

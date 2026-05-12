@@ -31,4 +31,8 @@ class Appointment extends Model
         {
             return $this->belongsTo(Service::class);
         }
+        public function activities()
+{
+    return $this->hasMany(Activity::class);
+}
 }

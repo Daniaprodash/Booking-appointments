@@ -123,8 +123,9 @@
 
             <div class="doctor-dashboard-layout">
                 <section class="doctor-dashboard-card">
-                    <h4>المواعيد القادمة</h4>
+                    
                     <div class="doctor-dashboard-appointments-list" aria-live="polite">
+                     <h4>المواعيد القادمة</h4>
                         @forelse($appointments as $appointment)
                         <div class="doctor-dashboard-appointment">
                             <div class="meta">
@@ -208,22 +209,24 @@
 
                     <hr style="margin:16px 0">
 
-                    <h4>نشاط حديث</h4>
                     <div class="doctor-dashboard-recent-activity">
-                        <div class="doctor-dashboard-activity">
-                            <i class="fas fa-check-circle" style="color:var(--primary-2);margin-top:4px"></i>
-                            <div>
-                                <div style="font-weight:700">تم تأكيد موعد مريم علي</div>
-                                <div style="font-size:0.9rem;color:var(--muted)">قبل 10 دقائق</div>
-                            </div>
-                        </div>
-
-                        <div class="doctor-dashboard-activity">
-                            <i class="fas fa-file-medical" style="color:#7c5cff;margin-top:4px"></i>
-                            <div>
-                                <div style="font-weight:700">تم رفع تقرير جديد للمريض خالد</div>
-                                <div style="font-size:0.9rem;color:var(--muted)">قبل ساعة</div>
-                            </div>
+                        <h4>نشاط حديث</h4>
+                        <div class="doctor-dashboard-activity-list">
+                            @forelse($activities as $activity)
+                                <div class="doctor-dashboard-activity-item">
+                                    <div class="doctor-dashboard-activity-icon">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </div>
+                                    <div class="doctor-dashboard-activity-content">
+                                        <p>{{ $activity->message }}</p>
+                                        <small>{{ $activity->created_at->diffForHumans() }}</small>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="doctor-dashboard-activity-empty">
+                                    لا يوجد نشاط حديث حالياً
+                                </div>
+                            @endforelse
                         </div>
                     </div>
                 </section>

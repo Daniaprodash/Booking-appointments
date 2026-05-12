@@ -654,3 +654,126 @@
     font-weight: 600;
     font-size: 14px;
 }
+
+/* Edit appointment modal */
+.appointment-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(1, 5, 45, 0.55);
+    backdrop-filter: blur(4px);
+    z-index: 1200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.appointment-modal-overlay.active {
+    display: flex;
+    animation: fadeIn 0.2s ease;
+}
+
+.appointment-modal-card {
+    width: 100%;
+    max-width: 640px;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 20px 50px rgba(1, 5, 45, 0.25);
+    overflow: hidden;
+}
+
+.appointment-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #e6e9ef;
+    background: linear-gradient(120deg, #f6fffd, #ffffff);
+}
+
+.appointment-modal-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--dark);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.appointment-modal-header h3 i {
+    color: var(--mint);
+}
+
+.appointment-modal-close {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 10px;
+    background: #f1f5f9;
+    color: var(--muted);
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.appointment-modal-close:hover {
+    color: var(--dark);
+    background: #e8edf5;
+}
+
+.appointment-modal-body {
+    padding: 1.25rem;
+    max-height: 65vh;
+    overflow-y: auto;
+}
+
+.appointment-modal-footer {
+    padding: 1rem 1.25rem;
+    border-top: 1px solid #e6e9ef;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.75rem;
+    background: #fafcff;
+}
+
+.appointment-modal-cancel {
+    background: #eef2f8;
+    color: var(--muted);
+}
+
+.appointment-modal-cancel:hover {
+    background: #e2e8f0;
+    color: var(--dark);
+}
+
+.appointment-modal-save {
+    width: auto;
+    min-width: 170px;
+}
+
+@media (max-width: 768px) {
+    .appointment-modal-overlay {
+        padding: 10px;
+    }
+
+    .appointment-modal-card {
+        border-radius: 14px;
+    }
+
+    .appointment-modal-body {
+        max-height: 72vh;
+        padding: 1rem;
+    }
+
+    .appointment-modal-footer {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    .appointment-modal-save,
+    .appointment-modal-cancel {
+        width: 100%;
+    }
+}

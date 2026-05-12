@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Doctor;
 use App\Models\Service;
+use App\Models\Activity;
 use App\Models\Appointment;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Testimonial;
+use App\Models\DoctorPatientEmail;
 class AppController extends Controller
 {
   // get data from DB
@@ -25,13 +27,20 @@ class AppController extends Controller
   {
       $doctors = Doctor::all();
       $services = Service::all();
+      $user = auth()->user();
+      $messages = DoctorPatientEmail::where('user_id', $user->id)
+      ->with('doctor.user') // لجلب اسم الطبيب من جدول users
+      ->latest()
+      ->get();
+
       $appointments = Appointment::where('user_id', Auth::id())
           ->with(['doctor', 'service'])
           ->orderBy('appointment_date', 'desc')
           ->orderBy('appointment_time', 'desc')
           ->get();
-
-      return view('userDashboard', compact('doctors', 'services', 'appointments'));
+      
+       
+      return view('userDashboard', compact('doctors', 'services', 'appointments' , 'messages'));
   }
 
   // view doctor dashboard page
@@ -83,7 +92,11 @@ class AppController extends Controller
         ->values()
         ->toArray();
 
-    return view('doctorDashboard', compact('appointments', 'doctor', 'showAll', 'allAppointmentsCount', 'percentage', 'calendarEvents'));
+        $activities = Activity::where('doctor_id', $doctorId)
+                     ->latest()
+                     ->limit(5)
+                     ->get();
+    return view('doctorDashboard', compact('activities','appointments', 'doctor', 'showAll', 'allAppointmentsCount', 'percentage', 'calendarEvents'));
   }
 
  // get testimonials

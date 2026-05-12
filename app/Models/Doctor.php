@@ -27,5 +27,8 @@ public function services()
 {
     return $this->belongsToMany(Service::class);
 }
-
+public function activities()
+{
+    return $this->hasMany(Activity::class);
+}
 }

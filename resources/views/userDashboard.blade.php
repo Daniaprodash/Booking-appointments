@@ -152,7 +152,16 @@
                         </span>
                         <div class="appointment-actions">
                             @if($appointment->status != 'cancelled')
-                                <button class="btn-action btn-edit">
+                                <button
+                                    type="button"
+                                    class="btn-action btn-edit"
+                                    data-id="{{ $appointment->id }}"
+                                    data-doctor-id="{{ $appointment->doctor_id }}"
+                                    data-service-id="{{ $appointment->service_id }}"
+                                    data-date="{{ $appointment->appointment_date }}"
+                                    data-time="{{ $appointment->appointment_time }}"
+                                    data-notes="{{ $appointment->notes }}"
+                                    onclick="openEditAppointmentModal(this)">
                                     <i class="fas fa-edit"></i> تعديل
                                 </button>
                                 <form action="{{ route('appointments.cancel', $appointment->id) }}"
@@ -267,30 +276,103 @@
         </div>
     </div>
 
-    <!-- قسم البريد -->
-  <div id="mail" class="tab-content">
+<!-- قسم البريد -->
+<div id="mail" class="tab-content">
     <h1 class="mail-title">البريد الوارد</h1>
 
     <div class="messages-container">
-        <!-- مثال لرسالة واحدة (كررها داخل foreach) -->
-        <div class="message-card">
-            <div class="msg-icon">
-                <i class="fa-solid fa-envelope"></i>
-            </div>
 
-            <div class="msg-content">
-                <h3 class="msg-title">عنوان الرسالة</h3>
-                <p class="msg-text">هذا نص مختصر عن محتوى الرسالة...</p>
-                <span class="msg-doctor">الدكتور: أحمد علي</span>
-            </div>
+        @forelse ($messages as $msg)
+            <div class="message-card">
+                <div class="msg-icon">
+                    <i class="fa-solid fa-envelope"></i>
+                </div>
 
-            <div class="msg-date">
-                <span>2024-01-10</span>
+                <div class="msg-content">
+                    <h3 class="msg-title">{{ $msg->subject }}</h3>
+
+                    <p class="msg-text">
+                        {{ Str::limit($msg->message, 50) }}
+                    </p>
+
+                    <span class="msg-doctor">
+                        الطبيب: {{ $msg->doctor->user->name ?? 'غير معروف' }}
+                    </span>
+                </div>
+
+                <div class="msg-date">
+                    <span>{{ $msg->created_at->format('Y-m-d') }}</span>
+                </div>
             </div>
-        </div>
+        @empty
+
+            <p class="no-messages">لا توجد رسائل حتى الآن.</p>
+
+        @endforelse
+
     </div>
-  </div>
- </div>
+</div>
+
+<!-- Edit Appointment Modal -->
+<div id="editAppointmentModal" class="appointment-modal-overlay" aria-hidden="true">
+    <div class="appointment-modal-card">
+        <div class="appointment-modal-header">
+            <h3><i class="fas fa-edit"></i> تعديل الموعد</h3>
+            <button type="button" class="appointment-modal-close" onclick="closeEditAppointmentModal()">&times;</button>
+        </div>
+
+        <form id="editAppointmentForm" method="POST" action="">
+            @csrf
+            @method('PUT')
+
+            <div class="appointment-modal-body">
+                <div class="form-group">
+                    <label for="edit_doctor_id"><i class="fas fa-user-md" style="margin-left: 0.5rem;"></i>اختر الطبيب</label>
+                    <select name="doctor_id" id="edit_doctor_id" required>
+                        <option value="">-- اختر الطبيب --</option>
+                        @foreach($doctors ?? [] as $doctor)
+                            <option value="{{ $doctor->id }}">
+                                {{ $doctor->user->name }} - {{ $doctor->specialty ?? 'طبيب أسنان' }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit_service_id"><i class="fas fa-tooth" style="margin-left: 0.5rem;"></i>اختر الخدمة</label>
+                    <select name="service_id" id="edit_service_id" required>
+                        <option value="">-- اختر الخدمة --</option>
+                        @foreach($services ?? [] as $service)
+                            <option value="{{ $service->id }}">{{ $service->title }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit_appointment_date"><i class="fas fa-calendar" style="margin-left: 0.5rem;"></i>تاريخ الموعد</label>
+                    <input type="date" name="appointment_date" id="edit_appointment_date" min="{{ date('Y-m-d') }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit_appointment_time"><i class="fas fa-clock" style="margin-left: 0.5rem;"></i>وقت الموعد</label>
+                    <input type="time" name="appointment_time" id="edit_appointment_time" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit_notes"><i class="fas fa-sticky-note" style="margin-left: 0.5rem;"></i>ملاحظات (اختياري)</label>
+                    <textarea name="notes" id="edit_notes" placeholder="أضف ملاحظات الموعد..."></textarea>
+                </div>
+            </div>
+
+            <div class="appointment-modal-footer">
+                <button type="button" class="btn-action appointment-modal-cancel" onclick="closeEditAppointmentModal()">إلغاء</button>
+                <button type="submit" class="btn-submit appointment-modal-save">
+                    <i class="fas fa-check-circle"></i> حفظ التعديل
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 
 <script>
     function switchTab(tabName) {
@@ -323,6 +405,47 @@
         document.querySelector('.tab-btn:last-child(2)').dispatchEvent(event);
     }
 
-   
+    function openEditAppointmentModal(button) {
+        const appointmentId = button.getAttribute('data-id');
+        const doctorId = button.getAttribute('data-doctor-id');
+        const serviceId = button.getAttribute('data-service-id');
+        const appointmentDate = button.getAttribute('data-date');
+        const appointmentTime = button.getAttribute('data-time');
+        const notes = button.getAttribute('data-notes') ?? '';
+
+        const form = document.getElementById('editAppointmentForm');
+        form.action = '{{ route("appointments.update", ":id") }}'.replace(':id', appointmentId);
+
+        document.getElementById('edit_doctor_id').value = doctorId || '';
+        document.getElementById('edit_service_id').value = serviceId || '';
+        document.getElementById('edit_appointment_date').value = appointmentDate || '';
+        document.getElementById('edit_appointment_time').value = appointmentTime || '';
+        document.getElementById('edit_notes').value = notes;
+
+        const modal = document.getElementById('editAppointmentModal');
+        modal.classList.add('active');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeEditAppointmentModal() {
+        const modal = document.getElementById('editAppointmentModal');
+        modal.classList.remove('active');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeEditAppointmentModal();
+        }
+    });
+
+    document.addEventListener('click', function(e) {
+        const modal = document.getElementById('editAppointmentModal');
+        if (e.target === modal) {
+            closeEditAppointmentModal();
+        }
+    });
 </script>
 @endsection
