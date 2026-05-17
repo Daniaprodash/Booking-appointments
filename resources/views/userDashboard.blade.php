@@ -15,6 +15,14 @@
                         <i class="fas fa-calendar-alt"></i>
                         إدارة مواعيدك وحجوزاتك الطبية من مكان واحد
                     </p>
+                    @if(Auth::user()->role === 'user')
+                        <div class="dashboard-profile-edit-wrap">
+                            <a href="{{ route('patient.profile.edit') }}" class="btn-book-appointment dashboard-profile-edit-btn">
+                                <i class="fas fa-user-edit"></i>
+                                تعديل الملف الشخصي
+                            </a>
+                        </div>
+                    @endif
                 </div>
             </div>
             <div class="stats-cards">
@@ -93,7 +101,7 @@
                     <h3 class="doctor-name">{{ $doctor->user->name }}</h3>
                     <div class="doctor-specialty">{{ $doctor->specialty ?? 'طبيب أسنان' }}</div>
                     <div class="doctor-contact">
-                        <span><i class="fas fa-phone"></i> {{ $doctor->phone ?? '---' }}</span>
+                        <span><i class="fas fa-phone"></i> {{ $doctor->user->phone_number ?? '---' }}</span>
                         <span><i class="fas fa-envelope"></i> {{ $doctor->user->email ?? '---' }}</span>
                     </div>
                     @if($doctor->bio)

@@ -87,9 +87,9 @@
                                 </div>
                             </div>
                             <div class="medical-records-card-footer">
-                                <a href="{{ route('patientFile', $patient->id) }}" class="medical-records-btn">
+                                <a href="{{ route('doctor.record.show', $patient->id) }}" class="medical-records-btn">
                                     <i class="fas fa-user-folder"></i>
-                                    <span>عرض ملف المريض</span>
+                                    <span>عرض السجل الطبي</span>
                                 </a>
                                    <!-- download medical record -->
                                <a href="#" class="download-medical-record-btn">

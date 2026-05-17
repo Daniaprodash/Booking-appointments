@@ -1,0 +1,333 @@
+/* Patient medical record dashboard — matches doctor dashboard palette */
+
+.medical-record-page .mr-section {
+    background: var(--card, #fff);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(2, 8, 23, 0.06);
+    border: 1px solid rgba(138, 147, 173, 0.12);
+    margin-bottom: 24px;
+    overflow: hidden;
+}
+
+.medical-record-page .mr-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 18px 22px;
+    background: linear-gradient(180deg, rgba(22, 225, 199, 0.08), transparent);
+    border-bottom: 1px solid rgba(138, 147, 173, 0.12);
+}
+
+.medical-record-page .mr-section-title {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent-contrast, #01052d);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.medical-record-page .mr-section-title i {
+    color: var(--primary-2, #0fb3a1);
+}
+
+.medical-record-page .mr-section-body {
+    padding: 22px;
+}
+
+/* Patient header */
+.mr-patient-header {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 20px;
+    align-items: start;
+}
+
+@media (min-width: 768px) {
+    .mr-patient-header {
+        grid-template-columns: 100px 1fr;
+    }
+}
+
+.mr-patient-avatar {
+    width: 88px;
+    height: 88px;
+    border-radius: 16px;
+    object-fit: cover;
+    border: 3px solid rgba(22, 225, 199, 0.25);
+    box-shadow: 0 8px 24px rgba(15, 179, 161, 0.15);
+}
+
+@media (min-width: 768px) {
+    .mr-patient-avatar {
+        width: 100px;
+        height: 100px;
+    }
+}
+
+.mr-patient-name {
+    margin: 0 0 8px;
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--accent-contrast, #01052d);
+}
+
+.mr-patient-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px 20px;
+    margin-top: 8px;
+}
+
+.mr-meta-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 0.92rem;
+    color: var(--muted, #8a93ad);
+}
+
+.mr-meta-item i {
+    color: var(--primary-2, #0fb3a1);
+    margin-top: 3px;
+    flex-shrink: 0;
+}
+
+.mr-meta-item strong {
+    display: block;
+    color: var(--accent-contrast, #01052d);
+    font-weight: 600;
+    margin-bottom: 2px;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+/* Medical record read grid */
+.mr-field-grid {
+    display: grid;
+    gap: 16px;
+}
+
+@media (min-width: 992px) {
+    .mr-field-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.mr-field-card {
+    background: rgba(1, 5, 45, 0.02);
+    border-radius: 12px;
+    padding: 14px 16px;
+    border: 1px solid rgba(138, 147, 173, 0.12);
+}
+
+.mr-field-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--primary-2, #0fb3a1);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.mr-field-value {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: var(--accent-contrast, #01052d);
+    white-space: pre-wrap;
+}
+
+.mr-empty-dash {
+    color: var(--muted, #8a93ad);
+    font-style: italic;
+}
+
+/* Buttons */
+.mr-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s;
+    text-decoration: none;
+}
+
+.mr-btn-primary {
+    background: linear-gradient(90deg, var(--primary-1, #16e1c7), var(--primary-2, #0fb3a1));
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(15, 179, 161, 0.25);
+}
+
+.mr-btn-primary:hover {
+    opacity: 0.95;
+    transform: translateY(-1px);
+}
+
+.mr-btn-outline {
+    background: #fff;
+    color: var(--muted, #8a93ad);
+    border: 2px solid rgba(138, 147, 173, 0.25);
+}
+
+.mr-btn-outline:hover {
+    border-color: var(--primary-2, #0fb3a1);
+    color: var(--primary-2, #0fb3a1);
+}
+
+.mr-btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* Visits table */
+.mr-table-wrap {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid rgba(138, 147, 173, 0.12);
+}
+
+.mr-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    min-width: 640px;
+}
+
+.mr-table th {
+    text-align: right;
+    padding: 12px 14px;
+    background: rgba(22, 225, 199, 0.08);
+    color: var(--accent-contrast, #01052d);
+    font-weight: 700;
+    border-bottom: 2px solid rgba(15, 179, 161, 0.2);
+}
+
+.mr-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(138, 147, 173, 0.1);
+    vertical-align: top;
+    color: var(--accent-contrast, #01052d);
+}
+
+.mr-table tr:last-child td {
+    border-bottom: none;
+}
+
+.mr-table tr:hover td {
+    background: rgba(22, 225, 199, 0.04);
+}
+
+.mr-table .mr-cell-muted {
+    color: var(--muted, #8a93ad);
+    font-size: 0.85rem;
+    max-width: 220px;
+}
+
+.mr-table .mr-btn-icon {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+}
+
+.medical-record-page .form-label {
+    font-weight: 600;
+    color: var(--accent-contrast, #01052d);
+    font-size: 0.9rem;
+}
+
+.medical-record-page .form-control,
+.medical-record-page .form-select {
+    border-radius: 10px;
+    border: 2px solid rgba(138, 147, 173, 0.2);
+}
+
+.medical-record-page .form-control:focus,
+.medical-record-page .form-select:focus {
+    border-color: var(--primary-2, #0fb3a1);
+    box-shadow: 0 0 0 3px rgba(22, 225, 199, 0.15);
+}
+
+.mr-d-none {
+    display: none !important;
+}
+
+/* Visit modal (no Bootstrap JS required) */
+.mr-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: rgba(1, 5, 45, 0.55);
+    backdrop-filter: blur(4px);
+}
+
+.mr-modal.is-open {
+    display: flex;
+}
+
+.mr-modal-dialog {
+    width: 100%;
+    max-width: 560px;
+    max-height: 92vh;
+    overflow: auto;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 24px 60px rgba(1, 5, 45, 0.25);
+}
+
+.mr-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(138, 147, 173, 0.12);
+    background: linear-gradient(180deg, rgba(22, 225, 199, 0.06), #fff);
+}
+
+.mr-modal-title {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--accent-contrast, #01052d);
+}
+
+.mr-modal-close {
+    width: 38px;
+    height: 38px;
+    border: none;
+    border-radius: 10px;
+    background: rgba(138, 147, 173, 0.15);
+    color: var(--accent-contrast, #01052d);
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.mr-modal-body {
+    padding: 20px;
+}
+
+.mr-modal-footer {
+    padding: 14px 20px 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+}

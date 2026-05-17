@@ -110,6 +110,21 @@
     font-size: 1.1rem;
 }
 
+.dashboard-profile-edit-wrap {
+    margin-top: 1rem;
+}
+
+.dashboard-profile-edit-btn {
+    width: auto;
+    max-width: 280px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    margin-top: 0;
+}
+
 .stats-cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));

@@ -160,7 +160,7 @@
                                 <div class="contact-icon">
                                     <i class="fas fa-phone"></i>
                                 </div>
-                                <a href="tel:{{ $doctor->phone }}">{{ $doctor->phone ?? 'غير متوفر' }}</a>
+                                <a href="tel:{{ $doctor->user->phone_number }}">{{ $doctor->user->phone_number ?? 'غير متوفر' }}</a>
                             </div>
 
                             <div class="contact-item">

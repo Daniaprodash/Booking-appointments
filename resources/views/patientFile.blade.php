@@ -58,7 +58,11 @@
                         <p style="margin:0;color:var(--muted);font-size:0.9rem"><i class="fas fa-envelope" style="margin-left:6px"></i>{{ $patient->email }}</p>
                     </div>
                 </div>
-                <p style="margin:0;color:var(--muted);font-size:0.9rem">هذه الصفحة مخصصة لعرض تفاصيل ملف المريض. يمكنك إضافة المزيد من المحتوى لاحقاً.</p>
+                <p style="margin:0 0 16px;color:var(--muted);font-size:0.9rem">نظرة سريعة على بيانات المريض. للسجل الطبي الكامل وزيارات العيادة:</p>
+                <a href="{{ route('doctor.record.show', $patient->id) }}" class="medical-records-btn" style="display:inline-flex;text-decoration:none">
+                    <i class="fas fa-notes-medical"></i>
+                    <span>فتح لوحة السجل الطبي</span>
+                </a>
             </div>
         </main>
     </div>
