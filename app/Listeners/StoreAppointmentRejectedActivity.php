@@ -29,8 +29,8 @@ class StoreAppointmentRejectedActivity
             'doctor_id'      => $appointment->doctor_id,
             'service_id'     => $appointment->service_id,
             'appointment_id' => $appointment->id,
-            'type'           => 'appointment_deleted',
-            'message'        => "تم رفض موعد المريض:" . $appointment->user->name,
+            'type'           => 'appointment_rejected',
+            'message'        => "تم رفض موعد المريض: " . $appointment->user->name,
         ]);
     }
 }

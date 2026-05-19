@@ -1,5 +1,64 @@
 /* Patient medical record dashboard — matches doctor dashboard palette */
 
+.medical-record-back-link {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.medical-record-back-link a:first-child {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--primary-2, #0fb3a1);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.medical-record-back-link a:first-child:hover {
+    gap: 12px;
+    color: var(--primary-1, #16e1c7);
+}
+
+.medical-record-download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #ff6b6b, #ee5a52);
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(238, 90, 82, 0.2);
+}
+
+.medical-record-download-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(238, 90, 82, 0.3);
+}
+
+.medical-record-download-btn i {
+    color: #fff;
+    font-size: 1rem;
+}
+
+@media (max-width: 480px) {
+    .medical-record-download-btn span {
+        display: none;
+    }
+
+    .medical-record-download-btn {
+        padding: 8px 12px;
+    }
+}
+
 .medical-record-page .mr-section {
     background: var(--card, #fff);
     border-radius: 16px;

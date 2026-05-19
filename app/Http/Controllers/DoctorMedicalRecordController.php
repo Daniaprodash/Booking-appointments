@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class DoctorMedicalRecordController extends Controller
 {
@@ -116,5 +117,55 @@ class DoctorMedicalRecordController extends Controller
         return redirect()
             ->route('doctor.record.show', $patient->id)
             ->with('success', 'تم حفظ السجل الطبي بنجاح.');
+    }
+
+    public function downloadPdf(int $id)
+    {
+        $resolved = $this->resolveDoctorAndPatient($id);
+        if (! $resolved) {
+            return redirect()->route('showMedicalRecords')->with('error', 'غير مصرح لك بتحميل هذا الملف.');
+        }
+
+        [$doctor, $patient] = $resolved;
+
+        $medicalRecord = DB::table('medical_records')->where('user_id', $patient->id)->first();
+        if ($medicalRecord === null) {
+            $medicalRecord = (object) [
+                'chronic_diseases' => null,
+                'allergies' => null,
+                'current_medications' => null,
+                'past_surgeries' => null,
+                'dental_history' => null,
+                'notes' => null,
+            ];
+        }
+
+        $visits = DB::table('visits')
+            ->where('user_id', $patient->id)
+            ->orderByDesc('visit_date')
+            ->orderByDesc('id')
+            ->get();
+
+        $genderLabel = match ($patient->gender ?? null) {
+            'male' => 'ذكر',
+            'female' => 'أنثى',
+            default => '—',
+        };
+
+        $dobFormatted = $patient->date_of_birth
+            ? \Illuminate\Support\Carbon::parse($patient->date_of_birth)->format('Y-m-d')
+            : null;
+
+        $pdf = Pdf::loadView('doctor.medical-records.pdf', compact('patient', 'doctor', 'medicalRecord', 'visits', 'genderLabel', 'dobFormatted'))
+            ->setOptions([
+                'defaultFont' => 'Amiri',
+                'isRemoteEnabled' => true,
+                'enable_font_subsetting' => true,
+                'chroot' => realpath(base_path()),
+            ]);
+
+        $fileName = 'medical_record_' . preg_replace('/[^\w\s-]/u', '', $patient->name) . '.pdf';
+
+        return $pdf->download($fileName);
     }
 }

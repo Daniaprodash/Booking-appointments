@@ -13,7 +13,7 @@ class DoctorController extends Controller
     public function getAllDoctors()
   {
     $doctors = Doctor::all();
-    return view('index', compact('doctors'));
+    return view('public.index', compact('doctors'));
   }
 
     /**
@@ -25,7 +25,7 @@ class DoctorController extends Controller
         if ($user->role !== 'doctor') {
             return redirect()->route('doctorDashboard')->with('error', 'غير مصرح لك بهذه الصفحة.');
         }
-        return view('doctorProfileEdit', compact('user'));
+        return view('doctor.profile-edit', compact('user'));
     }
 
     /**
@@ -83,23 +83,4 @@ class DoctorController extends Controller
 
 
 
-    /**
-     * عرض ملف المريض (للطبيب فقط، والمرضى الذين لديهم مواعيد عنده).
-     */
-    public function patientFile(User $patient)
-    {
-        $doctor = Doctor::where('user_id', Auth::id())->first();
-        if (!$doctor) {
-            return redirect()->route('dashboard')->with('error', 'غير مصرح لك بهذه الصفحة.');
-        }
-
-        $hasAppointment = $patient->appointments()->where('doctor_id', $doctor->id)->exists();
-        if (!$hasAppointment) {
-            return redirect()->route('showMedicalRecords')->with('error', 'هذا المريض غير مرتبط بمواعيدك.');
-        }
-
-        return view('patientFile', compact('patient', 'doctor'));
-    }
-
-    
 }

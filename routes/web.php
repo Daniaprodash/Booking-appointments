@@ -24,12 +24,14 @@ Route::controller(AuthController::class)->name('auth.')->group(function(){
 // routes محمية
 Route::middleware('auth')->group(function() {
     Route::get('/dashboard', [App\Http\Controllers\AppController::class, 'index'])->name('dashboard');
+    Route::get('/patient/medical-record', [App\Http\Controllers\AppController::class, 'patientMedicalRecord'])->name('patient.medical-record');
     Route::get('/doctorDashboard' , [App\Http\Controllers\AppController::class, 'doctorDashboard'])->name('doctorDashboard');
     Route::get('/doctor/profile/edit', [DoctorController::class, 'editProfile'])->name('doctor.profile.edit');
     Route::put('/doctor/profile', [DoctorController::class, 'updateProfile'])->name('doctor.profile.update');
     Route::get('/patient/profile/edit', [PatientProfileController::class, 'edit'])->name('patient.profile.edit');
     Route::put('/patient/profile', [PatientProfileController::class, 'update'])->name('patient.profile.update');
     Route::post('/appointments', [App\Http\Controllers\AppointmentController::class, 'store'])->name('appointments.store');
+    Route::get('/appointments/available-slots', [App\Http\Controllers\AppointmentController::class, 'getAvailableSlots'])->name('appointments.available-slots');
     Route::put('/appointments/{id}', [App\Http\Controllers\AppointmentController::class, 'update'])->name('appointments.update');
     Route::delete('/appointments/{id}', [App\Http\Controllers\AppointmentController::class, 'cancel'])->name('appointments.cancel');
     Route::patch('/appointments/{id}/confirm', [App\Http\Controllers\AppointmentController::class, 'confirm'])->name('appointments.confirm');
@@ -37,13 +39,16 @@ Route::middleware('auth')->group(function() {
     Route::post('/appointments/{id}/send-email', [App\Http\Controllers\AppointmentController::class, 'sendEmail'])->name('appointments.send-email');
     Route::delete('/appointments/{id}/delete', [App\Http\Controllers\AppointmentController::class, 'delete'])->name('appointments.delete');
     Route::get('/showMedicalRecords' , [AppController::class, 'showMedicalRecords'])->name('showMedicalRecords');
-    Route::get('/doctor/patient/{patient}', [DoctorController::class, 'patientFile'])->name('patientFile');
     Route::get('/doctor/patient/{id}/record', [DoctorMedicalRecordController::class, 'show'])->name('doctor.record.show');
+    Route::get('/doctor/patient/{id}/record/pdf', [DoctorMedicalRecordController::class, 'downloadPdf'])->name('doctor.record.pdf');
     Route::put('/doctor/patient/{id}/record', [DoctorMedicalRecordController::class, 'update'])->name('doctor.record.update');
     Route::post('/doctor/patient/{id}/visit', [DoctorVisitController::class, 'store'])->name('doctor.visit.store');
     Route::put('/doctor/visit/{visitId}', [DoctorVisitController::class, 'update'])->name('doctor.visit.update');
     Route::get('/payment', [AppController::class, 'showPaymentPage'])->name('payment');
     Route::get('/settings', [AppController::class, 'showSettingsPage'])->name('settings');
+    Route::get('/doctor/notifications', [AppController::class, 'notifications'])->name('doctor.notifications');
+    Route::post('/doctor/notifications/{id}/read', [AppController::class, 'markNotificationAsRead'])->name('doctor.notifications.read');
+    Route::post('/doctor/notifications/read-all', [AppController::class, 'markAllNotificationsAsRead'])->name('doctor.notifications.read-all');
     Route::delete('/testimonials/{id}', [App\Http\Controllers\TestimonialController::class, 'delete'])->name('testimonials.delete');
 });
 

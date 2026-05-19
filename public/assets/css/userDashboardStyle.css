@@ -111,18 +111,96 @@
 }
 
 .dashboard-profile-edit-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
     margin-top: 1rem;
+    align-items: flex-start;
 }
 
-.dashboard-profile-edit-btn {
-    width: auto;
-    max-width: 280px;
+.dashboard-profile-edit-btn,
+.btn-book-appointment.dashboard-profile-edit-btn {
+    position: relative;
+    padding: 0.85rem 2rem;
+    border-radius: 14px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    text-decoration: none;
+    gap: 0.6rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    border: 2px solid transparent;
+    box-shadow: 0 4px 15px rgba(0,0,0,.1);
+    width: auto !important;
+    min-width: 220px;
+    max-width: fit-content;
     margin-top: 0;
+    flex: 0 0 auto !important;
+}
+
+.dashboard-profile-edit-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,.2), transparent);
+    transition: left 0.5s;
+}
+
+.dashboard-profile-edit-btn:hover::before {
+    left: 100%;
+}
+
+.dashboard-profile-edit-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0,0,0,.2);
+}
+
+.dashboard-profile-edit-btn i {
+    font-size: 1.1rem;
+    transition: transform 0.3s;
+}
+
+.dashboard-profile-edit-btn:hover i {
+    transform: scale(1.15) rotate(-5deg);
+}
+
+.dashboard-profile-edit-btn:first-child {
+    background: linear-gradient(135deg, var(--mint), #0fb3a1);
+    color: #fff;
+}
+
+.dashboard-profile-edit-btn:first-child:hover {
+    background: linear-gradient(135deg, #0fb3a1, var(--mint));
+    border-color: rgba(22,225,199,.3);
+}
+
+.dashboard-medical-record-btn {
+    background: linear-gradient(135deg, var(--dark), #0a0f3d);
+    color: #fff;
+    border-color: rgba(22,225,199,.2);
+}
+
+.dashboard-medical-record-btn:hover {
+    background: linear-gradient(135deg, #0a0f3d, var(--dark));
+    border-color: var(--mint);
+    box-shadow: 0 8px 25px rgba(22,225,199,.25);
+}
+
+@media (max-width: 768px) {
+    .dashboard-profile-edit-wrap {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .dashboard-profile-edit-btn {
+        max-width: 100%;
+    }
 }
 
 .stats-cards {
@@ -533,6 +611,87 @@
     outline: none;
     border-color: var(--mint);
     box-shadow: 0 0 0 3px rgba(22,225,199,.15);
+}
+
+.time-slots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.time-slot {
+    padding: 0.75rem 0.5rem;
+    border: 2px solid #e0e6f0;
+    border-radius: 10px;
+    background: #fff;
+    color: var(--dark);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.time-slot:hover:not(.booked) {
+    border-color: var(--mint);
+    background: rgba(22,225,199,.08);
+    transform: translateY(-2px);
+}
+
+.time-slot.selected {
+    border-color: var(--mint);
+    background: var(--mint);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(22,225,199,.3);
+}
+
+.time-slot.booked {
+    background: #f1f5f9;
+    color: #cbd5e1;
+    border-color: #e2e8f0;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
+.time-slots-placeholder {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.9rem;
+    padding: 1.5rem;
+    background: #f8fafc;
+    border-radius: 10px;
+    border: 2px dashed #e2e8f0;
+}
+
+.time-slots-loading {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: var(--muted);
+    padding: 1rem;
+}
+
+.time-slots-loading i {
+    animation: spin 1s linear infinite;
+    margin-left: 0.5rem;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@media (max-width: 480px) {
+    .time-slots-grid {
+        grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+        gap: 0.5rem;
+    }
+
+    .time-slot {
+        padding: 0.6rem 0.4rem;
+        font-size: 0.85rem;
+    }
 }
 
 .btn-submit {

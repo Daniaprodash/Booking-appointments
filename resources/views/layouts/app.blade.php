@@ -25,6 +25,8 @@
     <link rel="stylesheet" href="{{asset('assets/css/userDashboardStyle.css')}}">
     <link rel="stylesheet" href="{{asset('assets/css/showMedicalRecordStyle.css')}}">
     <link rel="stylesheet" href="{{asset('assets/css/doctorDashboardStyle.css')}}">
+    <link rel="stylesheet" href="{{asset('assets/css/notificationsStyle.css')}}">
+    <link rel="stylesheet" href="{{asset('assets/css/patientMedicalRecordStyle.css')}}">
     
 </head> 
 <body>

@@ -12,7 +12,12 @@ class Activity extends Model
         'service_id',
         'appointment_id',
         'type',
-        'message',    
+        'message',
+        'is_read',
+    ];
+
+    protected $casts = [
+        'is_read' => 'boolean',
     ];
 
     public function appointment()

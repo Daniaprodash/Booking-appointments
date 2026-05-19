@@ -21,6 +21,10 @@
                                 <i class="fas fa-user-edit"></i>
                                 تعديل الملف الشخصي
                             </a>
+                            <a href="{{ route('patient.medical-record') }}" class="btn-book-appointment dashboard-profile-edit-btn dashboard-medical-record-btn">
+                                <i class="fas fa-file-medical"></i>
+                                الملف الطبي
+                            </a>
                         </div>
                     @endif
                 </div>
@@ -159,7 +163,7 @@
                             @endif
                         </span>
                         <div class="appointment-actions">
-                            @if($appointment->status != 'cancelled')
+                            @if($appointment->status == 'pending' || $appointment->status == 'rejected')
                                 <button
                                     type="button"
                                     class="btn-action btn-edit"
@@ -176,6 +180,17 @@
                                       method="POST" 
                                       style="display: inline;"
                                       onsubmit="return confirm('هل أنت متأكد من إلغاء هذا الموعد؟')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn-action btn-cancel">
+                                        <i class="fas fa-times"></i> إلغاء
+                                    </button>
+                                </form>
+                            @elseif($appointment->status == 'confirmed')
+                                <form action="{{ route('appointments.cancel', $appointment->id) }}"
+                                      method="POST" 
+                                      style="display: inline;"
+                                      onsubmit="return confirm('هل أنت متأكد من إلغاء هذا الموعد المؤكد؟')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn-action btn-cancel">
@@ -255,12 +270,10 @@
 
                 <div class="form-group">
                     <label for="appointment_time"><i class="fas fa-clock" style="margin-left: 0.5rem;"></i>وقت الموعد</label>
-                    <input 
-                        type="time" 
-                        name="appointment_time" 
-                        id="appointment_time" 
-                        value="{{ old('appointment_time') }}"
-                        required>
+                    <input type="hidden" name="appointment_time" id="appointment_time" value="{{ old('appointment_time') }}" required>
+                    <div id="time-slots-container" class="time-slots-grid">
+                        <p class="time-slots-placeholder">يرجى اختيار التاريخ أولاً لعرض الأوقات المتاحة</p>
+                    </div>
                     @error('appointment_time')
                         <p style="color: var(--pink); font-size: 0.85rem; margin-top: 0.3rem;">{{ $message }}</p>
                     @enderror
@@ -363,7 +376,10 @@
 
                 <div class="form-group">
                     <label for="edit_appointment_time"><i class="fas fa-clock" style="margin-left: 0.5rem;"></i>وقت الموعد</label>
-                    <input type="time" name="appointment_time" id="edit_appointment_time" required>
+                    <input type="hidden" name="appointment_time" id="edit_appointment_time" required>
+                    <div id="edit-time-slots-container" class="time-slots-grid">
+                        <p class="time-slots-placeholder">يرجى اختيار التاريخ أولاً لعرض الأوقات المتاحة</p>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -430,6 +446,9 @@
         document.getElementById('edit_appointment_time').value = appointmentTime || '';
         document.getElementById('edit_notes').value = notes;
 
+        // تحميل الأوقات المتاحة للتعديل
+        fetchEditAvailableSlots(doctorId, appointmentDate, appointmentTime);
+
         const modal = document.getElementById('editAppointmentModal');
         modal.classList.add('active');
         modal.setAttribute('aria-hidden', 'false');
@@ -455,5 +474,127 @@
             closeEditAppointmentModal();
         }
     });
+
+    // نظام الأوقات المتاحة
+    const doctorSelect = document.getElementById('doctor_id');
+    const dateInput = document.getElementById('appointment_date');
+    const timeSlotsContainer = document.getElementById('time-slots-container');
+    const hiddenTimeInput = document.getElementById('appointment_time');
+
+    function fetchAvailableSlots() {
+        const doctorId = doctorSelect.value;
+        const selectedDate = dateInput.value;
+
+        if (!doctorId || !selectedDate) {
+            timeSlotsContainer.innerHTML = '<p class="time-slots-placeholder">يرجى اختيار الطبيب والتاريخ أولاً لعرض الأوقات المتاحة</p>';
+            return;
+        }
+
+        timeSlotsContainer.innerHTML = '<p class="time-slots-loading"><i class="fas fa-spinner"></i> جاري تحميل الأوقات المتاحة...</p>';
+
+        fetch(`{{ route('appointments.available-slots') }}?doctor_id=${doctorId}&date=${selectedDate}`)
+            .then(response => response.json())
+            .then(data => {
+                timeSlotsContainer.innerHTML = '';
+                
+                if (data.available.length === 0) {
+                    timeSlotsContainer.innerHTML = '<p class="time-slots-placeholder">لا توجد أوقات متاحة في هذا التاريخ</p>';
+                    return;
+                }
+
+                data.available.forEach(time => {
+                    const slot = document.createElement('div');
+                    slot.className = 'time-slot';
+                    slot.textContent = formatTime(time);
+                    slot.dataset.time = time;
+                    slot.addEventListener('click', () => selectTimeSlot(slot, time));
+                    timeSlotsContainer.appendChild(slot);
+                });
+
+                // استعادة القيمة القديمة إذا وجدت
+                const oldTime = hiddenTimeInput.value;
+                if (oldTime) {
+                    const oldSlot = timeSlotsContainer.querySelector(`[data-time="${oldTime}"]`);
+                    if (oldSlot) selectTimeSlot(oldSlot, oldTime);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching slots:', error);
+                timeSlotsContainer.innerHTML = '<p class="time-slots-placeholder">حدث خطأ في تحميل الأوقات، يرجى المحاولة مرة أخرى</p>';
+            });
+    }
+
+    function formatTime(time) {
+        const [hours, minutes] = time.split(':');
+        const hour = parseInt(hours);
+        const period = hour >= 12 ? 'م' : 'ص';
+        const displayHour = hour > 12 ? hour - 12 : (hour === 0 ? 12 : hour);
+        return `${displayHour}:${minutes} ${period}`;
+    }
+
+    function selectTimeSlot(slot, time) {
+        document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+        slot.classList.add('selected');
+        hiddenTimeInput.value = time;
+    }
+
+    doctorSelect.addEventListener('change', fetchAvailableSlots);
+    dateInput.addEventListener('change', fetchAvailableSlots);
+
+    // نظام الأوقات المتاحة للتعديل
+    const editDoctorSelect = document.getElementById('edit_doctor_id');
+    const editDateInput = document.getElementById('edit_appointment_date');
+    const editTimeSlotsContainer = document.getElementById('edit-time-slots-container');
+    const editHiddenTimeInput = document.getElementById('edit_appointment_time');
+
+    function fetchEditAvailableSlots(doctorId, selectedDate, preselectedTime = null) {
+        doctorId = doctorId || editDoctorSelect.value;
+        selectedDate = selectedDate || editDateInput.value;
+
+        if (!doctorId || !selectedDate) {
+            editTimeSlotsContainer.innerHTML = '<p class="time-slots-placeholder">يرجى اختيار الطبيب والتاريخ أولاً</p>';
+            return;
+        }
+
+        editTimeSlotsContainer.innerHTML = '<p class="time-slots-loading"><i class="fas fa-spinner"></i> جاري تحميل الأوقات...</p>';
+
+        fetch(`{{ route('appointments.available-slots') }}?doctor_id=${doctorId}&date=${selectedDate}`)
+            .then(response => response.json())
+            .then(data => {
+                editTimeSlotsContainer.innerHTML = '';
+                
+                if (data.available.length === 0) {
+                    editTimeSlotsContainer.innerHTML = '<p class="time-slots-placeholder">لا توجد أوقات متاحة</p>';
+                    return;
+                }
+
+                data.available.forEach(time => {
+                    const slot = document.createElement('div');
+                    slot.className = 'time-slot';
+                    slot.textContent = formatTime(time);
+                    slot.dataset.time = time;
+                    slot.addEventListener('click', () => selectEditTimeSlot(slot, time));
+                    editTimeSlotsContainer.appendChild(slot);
+                });
+
+                if (preselectedTime) {
+                    const preSlot = editTimeSlotsContainer.querySelector(`[data-time="${preselectedTime}"]`);
+                    if (preSlot) selectEditTimeSlot(preSlot, preselectedTime);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching edit slots:', error);
+                editTimeSlotsContainer.innerHTML = '<p class="time-slots-placeholder">حدث خطأ في تحميل الأوقات</p>';
+            });
+    }
+
+    function selectEditTimeSlot(slot, time) {
+        editTimeSlotsContainer.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+        slot.classList.add('selected');
+        editHiddenTimeInput.value = time;
+    }
+
+    editDoctorSelect.addEventListener('change', () => fetchEditAvailableSlots());
+    editDateInput.addEventListener('change', () => fetchEditAvailableSlots());
 </script>
 @endsection

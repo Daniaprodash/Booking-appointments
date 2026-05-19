@@ -118,3 +118,84 @@
     text-decoration: none;
    
 }
+
+/* Medical Records Page - without sidebar */
+.medical-records-page-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 24px;
+    min-height: calc(100vh - 80px);
+}
+
+.medical-records-back-link {
+    margin-bottom: 20px;
+}
+
+.medical-records-back-link a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--primary-2);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.medical-records-back-link a:hover {
+    gap: 12px;
+    color: var(--primary-1);
+}
+
+.medical-records-page-title {
+    margin: 0 0 24px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent-contrast);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.medical-records-page-title i {
+    color: var(--primary-2);
+}
+
+/* Medical Record Page - without sidebar */
+.medical-record-page-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 24px;
+    min-height: calc(100vh - 80px);
+}
+
+.medical-record-back-link {
+    margin-bottom: 20px;
+}
+
+.medical-record-back-link a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--primary-2);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.medical-record-back-link a:hover {
+    gap: 12px;
+    color: var(--primary-1);
+}
+
+@media (max-width: 768px) {
+    .medical-records-page-container,
+    .medical-record-page-container {
+        padding: 20px 16px;
+    }
+
+    .medical-records-page-title {
+        font-size: 1.2rem;
+    }
+}

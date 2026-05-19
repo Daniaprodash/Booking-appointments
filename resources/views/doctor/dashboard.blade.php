@@ -31,6 +31,16 @@
             <nav class="doctor-dashboard-nav-list" aria-label="قائمة التنقل">
                 <a class="doctor-dashboard-nav-item active" href="#"><i class="fas fa-tachometer-alt"></i> لوحة المعلومات</a>
                 <a class="doctor-dashboard-nav-item" href="{{ route('showMedicalRecords') }}"><i class="fas fa-file-medical"></i> السجلات الطبية</a>
+                <a class="doctor-dashboard-nav-item" href="{{ route('doctor.notifications') }}">
+                    <i class="fas fa-bell"></i> الإشعارات
+                    @php
+                        $doctorNav = App\Models\Doctor::where('user_id', auth()->id())->first();
+                        $unreadNavCount = $doctorNav ? App\Models\Activity::where('doctor_id', $doctorNav->id)->where('is_read', false)->count() : 0;
+                    @endphp
+                    @if($unreadNavCount > 0)
+                        <span class="nav-badge">{{ $unreadNavCount }}</span>
+                    @endif
+                </a>
                 <a class="doctor-dashboard-nav-item" href="{{ route('payment') }}"><i class="fas fa-wallet"></i> الفواتير والمدفوعات</a>
                 <a class="doctor-dashboard-nav-item" href="{{ route('settings') }}"><i class="fas fa-cog"></i> الإعدادات</a>
                 <a class="doctor-dashboard-nav-item" href="{{ route('auth.logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a>
@@ -56,9 +66,16 @@
                 </div>
 
                 <div class="doctor-dashboard-actions">
-                    <div class="doctor-dashboard-icon-btn" title="إشعارات">
+                    <a href="{{ route('doctor.notifications') }}" class="doctor-dashboard-icon-btn" title="الإشعارات" style="text-decoration:none;position:relative">
                         <i class="fas fa-bell" style="color:var(--primary-2)"></i>
-                    </div>
+                        @php
+                            $doctorNotif = App\Models\Doctor::where('user_id', auth()->id())->first();
+                            $unreadNotifCount = $doctorNotif ? App\Models\Activity::where('doctor_id', $doctorNotif->id)->where('is_read', false)->count() : 0;
+                        @endphp
+                        @if($unreadNotifCount > 0)
+                            <span class="notification-dot">{{ $unreadNotifCount }}</span>
+                        @endif
+                    </a>
                     <div class="doctor-dashboard-icon-btn" title="مساعدة">
                         <i class="fas fa-question" style="color:var(--primary-2)"></i>
                     </div>
@@ -85,7 +102,7 @@
                         <i class="fas fa-calendar-day"></i>
                     </div>
                     <div class="doctor-dashboard-stat-content">
-                        <h3>{{ $appointments->count() }}</h3>
+                        <h3>{{ $allAppointmentsCount }}</h3>
                         <p>عدد المواعيد</p>
                     </div>
                 </div>
@@ -95,7 +112,7 @@
                         <i class="fas fa-user-injured"></i>
                     </div>
                     <div class="doctor-dashboard-stat-content">
-                        <h3>{{ $appointments->count() }}</h3>
+                        <h3>{{ $patientCount }}</h3>
                         <p>عدد المرضى</p>
                     </div>
                 </div>
@@ -205,29 +222,6 @@
                             عرض آخر 3 مواعيد
                         </a>
                         @endif
-                    </div>
-
-                    <hr style="margin:16px 0">
-
-                    <div class="doctor-dashboard-recent-activity">
-                        <h4>نشاط حديث</h4>
-                        <div class="doctor-dashboard-activity-list">
-                            @forelse($activities as $activity)
-                                <div class="doctor-dashboard-activity-item">
-                                    <div class="doctor-dashboard-activity-icon">
-                                        <i class="fas fa-calendar-alt"></i>
-                                    </div>
-                                    <div class="doctor-dashboard-activity-content">
-                                        <p>{{ $activity->message }}</p>
-                                        <small>{{ $activity->created_at->diffForHumans() }}</small>
-                                    </div>
-                                </div>
-                            @empty
-                                <div class="doctor-dashboard-activity-empty">
-                                    لا يوجد نشاط حديث حالياً
-                                </div>
-                            @endforelse
-                        </div>
                     </div>
                 </section>
 

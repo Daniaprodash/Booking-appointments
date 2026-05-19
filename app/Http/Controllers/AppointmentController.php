@@ -16,6 +16,39 @@ use App\Events\AppointmentRejected;
 
 class AppointmentController extends Controller
 {
+    // جلب الأوقات المتاحة لطبيب في تاريخ محدد
+    public function getAvailableSlots(Request $request)
+    {
+        $request->validate([
+            'doctor_id' => 'required|exists:doctors,id',
+            'date' => 'required|date',
+        ]);
+
+        $doctorId = $request->doctor_id;
+        $date = $request->date;
+
+        // تحديد ساعات العمل (من 9 صباحاً إلى 5 مساءً، كل ساعة موعد)
+        $workingHours = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
+
+        // جلب الأوقات المحجوزة لهذا الطبيب في هذا التاريخ
+        $bookedSlots = Appointment::where('doctor_id', $doctorId)
+            ->where('appointment_date', $date)
+            ->whereNotIn('status', ['cancelled', 'rejected'])
+            ->pluck('appointment_time')
+            ->map(function ($time) {
+                return substr($time, 0, 5); // تحويل "09:00:00" إلى "09:00"
+            })
+            ->toArray();
+
+        // الأوقات المتاحة هي الأوقات التي ليست محجوزة
+        $availableSlots = array_diff($workingHours, $bookedSlots);
+
+        return response()->json([
+            'available' => array_values($availableSlots),
+            'booked' => $bookedSlots,
+        ]);
+    }
+
     // store appointment (by user)
     public function store(Request $request)
     {
@@ -38,6 +71,19 @@ class AppointmentController extends Controller
         if ($validator->fails()) {
             return redirect()->back()
                 ->withErrors($validator)
+                ->withInput();
+        }
+
+        // التحقق من أن الوقت غير محجوز مسبقاً
+        $existingAppointment = Appointment::where('doctor_id', $request->doctor_id)
+            ->where('appointment_date', $request->appointment_date)
+            ->where('appointment_time', $request->appointment_time)
+            ->whereNotIn('status', ['cancelled', 'rejected'])
+            ->exists();
+
+        if ($existingAppointment) {
+            return redirect()->back()
+                ->withErrors(['appointment_time' => 'هذا الوقت محجوز مسبقاً، يرجى اختيار وقت آخر.'])
                 ->withInput();
         }
 
@@ -67,6 +113,11 @@ class AppointmentController extends Controller
                 ->with('error', 'لا يمكن تعديل موعد ملغي.');
         }
 
+        if ($appointment->status === 'confirmed') {
+            return redirect()->route('dashboard')
+                ->with('error', 'لا يمكن تعديل موعد مؤكد. يرجى إلغاء الموعد وحجز جديد.');
+        }
+
         $validator = Validator::make($request->all(), [
             'doctor_id' => 'required|exists:doctors,id',
             'service_id' => 'required|exists:services,id',
@@ -86,6 +137,20 @@ class AppointmentController extends Controller
         if ($validator->fails()) {
             return redirect()->back()
                 ->withErrors($validator)
+                ->withInput();
+        }
+
+        // التحقق من أن الوقت غير محجوز مسبقاً (باستثناء الموعد الحالي)
+        $existingAppointment = Appointment::where('doctor_id', $request->doctor_id)
+            ->where('appointment_date', $request->appointment_date)
+            ->where('appointment_time', $request->appointment_time)
+            ->where('id', '!=', $id)
+            ->whereNotIn('status', ['cancelled', 'rejected'])
+            ->exists();
+
+        if ($existingAppointment) {
+            return redirect()->back()
+                ->withErrors(['appointment_time' => 'هذا الوقت محجوز مسبقاً، يرجى اختيار وقت آخر.'])
                 ->withInput();
         }
 
