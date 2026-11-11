@@ -35,11 +35,13 @@
                     <li><a href="#services"><i class="fas fa-chevron-left"></i> الخدمات</a></li>
                     <li><a href="#doctors"><i class="fas fa-chevron-left"></i> الأطباء</a></li>
                     @auth
-                      @if(auth()->user()->role == 'doctor')
-                       <li><a href="{{route('doctorDashboard')}}"><i class="fas fa-chevron-left"></i> لوحة التحكم</a></li>
-                       @elseif(auth()->user()->role == 'user')
-                       <li><a href="{{route('dashboard')}}"><i class="fas fa-chevron-left"></i> لوحة التحكم</a></li>
-                      @endif
+                      @if(auth()->user()->role == 'admin')
+                        <li><a href="{{route('admin.dashboard')}}"><i class="fas fa-chevron-left"></i> لوحة التحكم</a></li>
+                        @elseif(auth()->user()->role == 'doctor')
+                        <li><a href="{{route('doctorDashboard')}}"><i class="fas fa-chevron-left"></i> لوحة التحكم</a></li>
+                        @else
+                        <li><a href="{{route('dashboard')}}"><i class="fas fa-chevron-left"></i> لوحة التحكم</a></li>
+                       @endif
 
                     @else
                         <li><a href="{{route('auth.login')}}"><i class="fas fa-chevron-left"></i> تسجيل الدخول</a></li>

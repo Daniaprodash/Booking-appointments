@@ -9,6 +9,13 @@ use App\Http\Controllers\PatientProfileController;
 use App\Http\Controllers\DoctorMedicalRecordController;
 use App\Http\Controllers\DoctorVisitController;
 
+// Admin routes
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\DoctorController as AdminDoctorController;
+use App\Http\Controllers\Admin\PatientController;
+use App\Http\Controllers\Admin\AppointmentController as AdminAppointmentController;
+use App\Http\Controllers\Admin\MedicalRecordController as AdminMedicalRecordController;
+
 // home page route
 Route::get('/', [AppController::class, 'getIndexData'])->name('index');
 
@@ -50,6 +57,19 @@ Route::middleware('auth')->group(function() {
     Route::post('/doctor/notifications/{id}/read', [AppController::class, 'markNotificationAsRead'])->name('doctor.notifications.read');
     Route::post('/doctor/notifications/read-all', [AppController::class, 'markAllNotificationsAsRead'])->name('doctor.notifications.read-all');
     Route::delete('/testimonials/{id}', [App\Http\Controllers\TestimonialController::class, 'delete'])->name('testimonials.delete');
+
+    // Admin panel routes
+    Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
+        Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+        Route::resource('doctors', AdminDoctorController::class);
+        Route::resource('patients', PatientController::class);
+        Route::get('appointments', [AdminAppointmentController::class, 'index'])->name('appointments.index');
+        Route::patch('appointments/{id}/status', [AdminAppointmentController::class, 'updateStatus'])->name('appointments.status');
+        Route::delete('appointments/{id}', [AdminAppointmentController::class, 'destroy'])->name('appointments.destroy');
+        Route::get('medical-records', [AdminMedicalRecordController::class, 'index'])->name('medical-records.index');
+        Route::get('medical-records/{id}', [AdminMedicalRecordController::class, 'show'])->name('medical-records.show');
+        Route::delete('medical-records/{id}', [AdminMedicalRecordController::class, 'destroy'])->name('medical-records.destroy');
+    });
 });
 
 //ather routes

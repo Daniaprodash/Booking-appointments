@@ -21,7 +21,7 @@
             </div>
 
             <div class="doctor-dashboard-profile">
-                <img src="{{ auth()->user()->image ?? asset('assets/images/default-doctor.jpg') }}" alt="صورة" class="doctor-dashboard-avatar">
+                <img src="{{ auth()->user()->image ? asset(auth()->user()->image) : asset('assets/images/default-doctor.jpg') }}" alt="صورة" class="doctor-dashboard-avatar">
                 <div class="doctor-dashboard-profile-info">
                     <h4>{{ auth()->user()->name ?? 'د. اسم الطبيب' }}</h4>
                     <p>{{ $doctor->specialty }}</p>
@@ -61,7 +61,7 @@
                 </button>
                 <div class="doctor-dashboard-searchbox">
                     <i class="fas fa-search" style="color:var(--muted)"></i>
-                    <input placeholder="ابحث عن مريض، موعد أو ملاحظة">
+                    <input id="doctorSearchInput" placeholder="ابحث عن مريض، موعد أو ملاحظة">
                 </div>
                 </div>
 
@@ -147,7 +147,7 @@
                         <div class="doctor-dashboard-appointment">
                             <div class="meta">
                                 <div class="doctor-dashboard-patient">
-                                    <img src="{{ $appointment->user->image ?? asset('assets/images/patient.webp') }}" alt="مريض">
+                                    <img src="{{ $appointment->user?->image ? asset($appointment->user->image) : asset('assets/images/patient.webp') }}" alt="مريض">
                                     <div>
                                         <div style="font-weight:700">{{ $appointment->user->name }}</div>
                                         <div style="font-size:0.9rem;color:var(--muted)">{{ $appointment->service->title }} - {{ $appointment->appointment_date }}</div>
@@ -240,7 +240,7 @@
                     <div class="doctor-dashboard-card">
                          <h4>الملف الشخصي</h4>
                         <div style="display:flex;gap:12px;align-items:center">
-                            <img src="{{ auth()->user()->image ?? asset('assets/images/default-doctor.jpg') }}" width="64" height="64" class="doctor-dashboard-avatar" style="object-fit:cover">
+                            <img src="{{ auth()->user()->image ? asset(auth()->user()->image) : asset('assets/images/default-doctor.jpg') }}" width="64" height="64" class="doctor-dashboard-avatar" style="object-fit:cover">
                             <div>
                                 <div style="font-weight:700">{{ auth()->user()->name ?? 'د. اسم الطبيب' }}</div>
                                 <div style="color:var(--muted)">{{ auth()->user()->email ?? 'email@domain.com' }}</div>
@@ -392,6 +392,57 @@
                 contentHeight: 280,
             });
             calendar.render();
+        });
+
+        // بحث فوري في قائمة المواعيد (Client-side)
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('doctorSearchInput');
+            const appointmentsList = document.querySelector('.doctor-dashboard-appointments-list');
+            if (!searchInput || !appointmentsList) return;
+
+            // عناصر ثابتة نحتاجها
+            const staticElements = appointmentsList.querySelectorAll('h4, a[href*="show_all"], a[href*="doctorDashboard"], div[style*="text-align:center"]');
+            let noResultMsg = null;
+
+            function updateSearch() {
+                const query = searchInput.value.trim().toLowerCase();
+                const items = appointmentsList.querySelectorAll('.doctor-dashboard-appointment');
+
+                if (query === '') {
+                    items.forEach(item => item.style.display = '');
+                    staticElements.forEach(el => el.style.display = '');
+                    if (noResultMsg) { noResultMsg.remove(); noResultMsg = null; }
+                    return;
+                }
+
+                let hasResults = false;
+                items.forEach(item => {
+                    const text = item.textContent.toLowerCase();
+                    if (text.includes(query)) {
+                        item.style.display = '';
+                        hasResults = true;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+
+                staticElements.forEach(el => el.style.display = 'none');
+
+                if (!hasResults) {
+                    if (!noResultMsg) {
+                        noResultMsg = document.createElement('div');
+                        noResultMsg.className = 'search-no-results';
+                        noResultMsg.style.cssText = 'text-align:center;padding:40px 20px;color:var(--muted)';
+                        noResultMsg.innerHTML = '<i class="fas fa-search" style="font-size:2.5rem;margin-bottom:12px;opacity:0.3;color:var(--primary-2)"></i><br><span style="font-size:1rem;font-weight:500">لا توجد نتائج مطابقة</span>';
+                        appointmentsList.appendChild(noResultMsg);
+                    }
+                    noResultMsg.style.display = '';
+                } else {
+                    if (noResultMsg) noResultMsg.style.display = 'none';
+                }
+            }
+
+            searchInput.addEventListener('input', updateSearch);
         });
     </script>
 @endsection

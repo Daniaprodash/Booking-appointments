@@ -42,12 +42,13 @@
                 </li>
                 @auth
                  <li class="nav-item">
-                    @if(auth()->user()->role === 'doctor')
-                    
-                      <a href="{{ route('doctorDashboard') }}" class="nav-link">لوحة التحكم</a>
-                    @else
-                      <a href="{{ route('dashboard') }}" class="nav-link">لوحة التحكم</a>
-                    @endif
+                 @if(auth()->user()->role === 'admin')
+                       <a href="{{ route('admin.dashboard') }}" class="nav-link">لوحة التحكم</a>
+                     @elseif(auth()->user()->role === 'doctor')
+                       <a href="{{ route('doctorDashboard') }}" class="nav-link">لوحة التحكم</a>
+                     @else
+                       <a href="{{ route('dashboard') }}" class="nav-link">لوحة التحكم</a>
+                     @endif
                  </li>
                 @endauth
                 <li class="nav-item nav-item-auth">

@@ -46,6 +46,8 @@ class AuthController extends Controller
       // التحقق من الدور (role)
       if ($user->role === 'doctor') {
           return redirect()->intended(route('doctorDashboard'));
+      } elseif ($user->role === 'admin') {
+          return redirect()->intended(route('admin.dashboard'));
       } elseif ($user->role === 'user') {
           return redirect()->intended(route('dashboard'));
       } else {

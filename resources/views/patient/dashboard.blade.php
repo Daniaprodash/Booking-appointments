@@ -98,7 +98,7 @@
                 <div class="doctor-card-dash">
                     
                     <img 
-                        src="{{ $doctor->user->image ?? asset('assets/images/default-doctor.jpg') }}" 
+                        src="{{ $doctor->user?->image ? asset($doctor->user->image) : asset('assets/images/default-doctor.jpg') }}" 
                         alt="{{ $doctor->user->name }}"
                         class="doctor-avatar"
                         onerror="this.src='{{ asset('assets/images/default-doctor.jpg') }}'">

@@ -40,7 +40,7 @@
                     </div>
                     <div class="mr-info-item">
                         <span class="mr-info-label">تاريخ الميلاد</span>
-                        <span class="mr-info-value">{{ $user->date_of_birth ? \Carbon\Carbon::parse($user->date_of_birth)->format('Y/m/d') : 'غير محدد' }}</span>
+                        <span class="mr-info-value">{{ $user->date_of_birth ?? 'غير محدد' }}</span>
                     </div>
                     <div class="mr-info-item">
                         <span class="mr-info-label">الجنس</span>
@@ -117,7 +117,7 @@
                         <div class="mr-visit-header">
                             <div class="mr-visit-date">
                                 <i class="fas fa-calendar-day"></i>
-                                <span>{{ \Carbon\Carbon::parse($visit->visit_date)->format('Y/m/d') }}</span>
+                                <span>{{ $visit->visit_date }}</span>
                             </div>
                             <div class="mr-visit-doctor">
                                 <i class="fas fa-user-md"></i>
